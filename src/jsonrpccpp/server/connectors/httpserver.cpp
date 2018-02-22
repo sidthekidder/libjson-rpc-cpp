@@ -43,22 +43,8 @@ IClientConnectionHandler *HttpServer::GetHandler(const std::string &url) {
 
 bool HttpServer::StartListening() {
   if (!this->running) {
-    const bool has_epoll =
-        (MHD_is_feature_supported(MHD_FEATURE_EPOLL) == MHD_YES);
-    const bool has_poll =
-        (MHD_is_feature_supported(MHD_FEATURE_POLL) == MHD_YES);
     unsigned int mhd_flags;
-    if (has_epoll)
-// In MHD version 0.9.44 the flag is renamed to
-// MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY. In later versions both
-// are deprecated.
-#if defined(MHD_USE_EPOLL_INTERNALLY)
-      mhd_flags = MHD_USE_EPOLL_INTERNALLY;
-#else
-      mhd_flags = MHD_USE_EPOLL_INTERNALLY_LINUX_ONLY;
-#endif
-    else if (has_poll)
-      mhd_flags = MHD_USE_POLL_INTERNALLY;
+    mhd_flags = MHD_USE_POLL_INTERNALLY;
     if (this->path_sslcert != "" && this->path_sslkey != "") {
       try {
         SpecificationParser::GetFileContent(this->path_sslcert, this->sslcert);
